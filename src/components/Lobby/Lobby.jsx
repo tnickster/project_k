@@ -29,10 +29,9 @@ function Lobby({ player, roomCode }) {
       }
       setRoomData(data);
       
-      // If game started, navigate to game screen (we'll build this later)
-      if (data.status === 'in_progress') {
-        alert('Game starting!');
-        // navigate(`/game/${code}`);
+      // If game started, navigate to role reveal
+    if (data.status === 'in_progress' && data.gameState.phase === 'role_reveal') {
+        navigate(`/role-reveal/${code}`);
       }
     });
 

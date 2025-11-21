@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useState, useEffect } from 'react';
 import Home from './components/Home/Home';
 import Lobby from './components/Lobby/Lobby';
+import RoleReveal from './components/RoleReveal/RoleReveal';
 import './App.css';
 
 function App() {
@@ -42,6 +43,18 @@ function App() {
                 <Lobby 
                   player={player}
                   roomCode={roomCode}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/role-reveal/:roomCode" 
+            element={
+              player ? (
+                <RoleReveal 
+                  player={player}
                 />
               ) : (
                 <Navigate to="/" replace />
