@@ -23,22 +23,28 @@ function RoleReveal({ player }) {
       }
       setRoomData(data);
 
-      // Move to next phase when all players acknowledged
-      if (data.gameState.phase !== PHASES.ROLE_REVEAL) {
-        // Navigate to game screen (we'll build this later)
-        alert('Everyone is ready! Game starting...');
-        // navigate(`/game/${roomCode}`);
+      // Move to voting phase
+      if (data.gameState.phase === 'voting') {
+        navigate(`/voting/${roomCode}`);
       }
     });
 
     return () => unsubscribe();
   }, [player, roomCode, navigate]);
 
-  const handleContinue = () => {
-    setAcknowledged(true);
-    // In a full implementation, we'd track which players have acknowledged
-    // For now, we'll just mark locally
-  };
+  const handleContinue = async () => {
+  setAcknowledged(true);
+  
+  // Simple version: just move to voting after a delay
+  // (In full version, we'd wait for all players)
+  setTimeout(async () => {
+    if (roomData.hostId === player.id) {
+      await updateGameState(roomCode, {
+        phase: 'voting'
+      });
+    }
+  }, 3000);
+};
 
   if (!roomData || !roomData.gameState.roles) {
     return (

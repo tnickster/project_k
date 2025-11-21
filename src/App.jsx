@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import Home from './components/Home/Home';
 import Lobby from './components/Lobby/Lobby';
 import RoleReveal from './components/RoleReveal/RoleReveal';
+import Voting from './components/Voting/Voting';
+import Results from './components/Results/Results';
 import './App.css';
 
 function App() {
@@ -54,6 +56,30 @@ function App() {
             element={
               player ? (
                 <RoleReveal 
+                  player={player}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/voting/:roomCode" 
+            element={
+              player ? (
+                <Voting 
+                  player={player}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/results/:roomCode" 
+            element={
+              player ? (
+                <Results 
                   player={player}
                 />
               ) : (

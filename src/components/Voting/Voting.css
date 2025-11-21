@@ -1,0 +1,166 @@
+.voting-card {
+  max-width: 700px;
+}
+
+.vote-counter {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #FFDAB9;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+}
+
+.vote-counter strong {
+  color: #FF6B6B;
+  font-size: 2rem;
+}
+
+.voting-instruction {
+  text-align: center;
+  color: #2C2C2C;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.voting-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.vote-option {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 4px solid #2C2C2C;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.vote-option:hover:not(:disabled) {
+  background: #FFB6C1;
+  transform: translateX(5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.vote-option.selected {
+  background: #FF6B6B;
+  border-color: #2C2C2C;
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.vote-option.is-you {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #E0E0E0;
+}
+
+.vote-option:disabled {
+  cursor: not-allowed;
+}
+
+.vote-avatar {
+  font-size: 3rem;
+  margin-right: 1rem;
+}
+
+.vote-info {
+  flex: 1;
+}
+
+.vote-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #2C2C2C;
+  margin-bottom: 0.25rem;
+}
+
+.you-label {
+  font-size: 0.9rem;
+  color: #FF6B6B;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.vote-cat {
+  font-size: 0.9rem;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.voted-message {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.voted-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: checkmark 0.5s ease-out;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.voted-message h3 {
+  color: #2C2C2C;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.voted-message p {
+  font-size: 1.2rem;
+  color: #2C2C2C;
+  margin-bottom: 2rem;
+}
+
+.voted-message strong {
+  color: #FF6B6B;
+}
+
+.waiting-text {
+  padding: 1.5rem;
+  background: #B0E0E6;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2C2C2C;
+}
+
+@media (max-width: 768px) {
+  .vote-counter {
+    font-size: 1.2rem;
+  }
+
+  .vote-counter strong {
+    font-size: 1.5rem;
+  }
+
+  .voting-instruction {
+    font-size: 1.1rem;
+  }
+
+  .vote-avatar {
+    font-size: 2rem;
+  }
+
+  .vote-name {
+    font-size: 1.1rem;
+  }
+}
