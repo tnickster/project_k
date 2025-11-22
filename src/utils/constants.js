@@ -41,6 +41,14 @@ export const ROLE_INFO = {
   }
 };
 
+export const ROLES = {
+  NAUGHTY: 'naughty',
+  REGULAR: 'regular',
+  SHERIFF: 'sheriff',
+  HEALER: 'healer',
+  ORACLE: 'oracle'
+};
+
 export const CAT_AVATARS = [
   'orange_tabby',
   'black_cat',
