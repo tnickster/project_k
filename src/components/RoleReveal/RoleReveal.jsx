@@ -23,9 +23,9 @@ function RoleReveal({ player }) {
       }
       setRoomData(data);
 
-      // Move to voting phase
-      if (data.gameState.phase === 'voting') {
-        navigate(`/voting/${roomCode}`);
+      // Move to night phase
+      if (data.gameState.phase === PHASES.NIGHT) {
+        navigate(`/night/${roomCode}`);
       }
     });
 
@@ -33,18 +33,18 @@ function RoleReveal({ player }) {
   }, [player, roomCode, navigate]);
 
   const handleContinue = async () => {
-  setAcknowledged(true);
-  
-  // Simple version: just move to voting after a delay
-  // (In full version, we'd wait for all players)
-  setTimeout(async () => {
-    if (roomData.hostId === player.id) {
-      await updateGameState(roomCode, {
-        phase: 'voting'
-      });
-    }
-  }, 3000);
-};
+    setAcknowledged(true);
+    
+    // Move to night phase after short delay
+    setTimeout(async () => {
+      if (roomData.hostId === player.id) {
+        await updateGameState(roomCode, {
+          phase: PHASES.NIGHT,
+          nightActions: {} // Clear previous night actions
+        });
+      }
+    }, 3000);
+  };
 
   if (!roomData || !roomData.gameState.roles) {
     return (

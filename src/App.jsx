@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import Home from './components/Home/Home';
 import Lobby from './components/Lobby/Lobby';
 import RoleReveal from './components/RoleReveal/RoleReveal';
+import Night from './components/Night/Night';
 import Voting from './components/Voting/Voting';
 import Results from './components/Results/Results';
 import './App.css';
+import Morning from './components/Morning/Morning';
 
 function App() {
   const [player, setPlayer] = useState(null);
@@ -56,6 +58,30 @@ function App() {
             element={
               player ? (
                 <RoleReveal 
+                  player={player}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/night/:roomCode" 
+            element={
+              player ? (
+                <Night 
+                  player={player}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/morning/:roomCode" 
+            element={
+              player ? (
+                <Morning 
                   player={player}
                 />
               ) : (

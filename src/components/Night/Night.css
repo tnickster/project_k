@@ -1,0 +1,237 @@
+.night-container {
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.night-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.night-header h1 {
+  font-size: 2.5rem;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  margin-bottom: 1rem;
+}
+
+.night-timer {
+  font-size: 1.5rem;
+  color: #B0E0E6;
+  margin-bottom: 0.5rem;
+}
+
+.night-timer strong {
+  color: #FFD700;
+  font-size: 2rem;
+}
+
+.actions-counter {
+  font-size: 1.1rem;
+  color: #888;
+}
+
+.night-card {
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.role-reminder {
+  border: 4px solid;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.role-reminder h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #2C2C2C;
+}
+
+.role-reminder p {
+  color: #666;
+  margin: 0;
+}
+
+.night-action-section {
+  text-align: center;
+}
+
+.night-action-section h2 {
+  font-size: 2rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+}
+
+.night-instruction {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.target-selection {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.target-option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.target-option:hover {
+  background: #F0F0F0;
+  transform: translateX(5px);
+}
+
+.target-option.selected {
+  background: #FFD700;
+  border-color: #FF6B6B;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.target-avatar {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+}
+
+.target-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #2C2C2C;
+}
+
+.oracle-clue {
+  background: linear-gradient(135deg, #E6E6FA 0%, #D8BFD8 100%);
+  border: 4px solid #8A2BE2;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.clue-text {
+  font-size: 1.4rem;
+  font-style: italic;
+  color: #4B0082;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.clue-hint {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.action-submitted {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.submitted-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: checkmark 0.5s ease-out;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.action-submitted h3 {
+  font-size: 2rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+}
+
+.action-submitted p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.waiting-spinner {
+  font-size: 4rem;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.naughty-action {
+  background: linear-gradient(180deg, rgba(255, 107, 107, 0.1) 0%, transparent 100%);
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+.sheriff-action {
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+.healer-action {
+  background: linear-gradient(180deg, rgba(144, 238, 144, 0.1) 0%, transparent 100%);
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+.oracle-action {
+  background: linear-gradient(180deg, rgba(138, 43, 226, 0.1) 0%, transparent 100%);
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+  .night-header h1 {
+    font-size: 2rem;
+  }
+
+  .night-timer {
+    font-size: 1.2rem;
+  }
+
+  .night-action-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .night-instruction {
+    font-size: 1rem;
+  }
+
+  .target-avatar {
+    font-size: 2rem;
+  }
+
+  .target-name {
+    font-size: 1.1rem;
+  }
+}

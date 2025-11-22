@@ -1,0 +1,213 @@
+.morning-container {
+  background: linear-gradient(180deg, #FFE4B5 0%, #FFF8DC 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.morning-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.morning-header h1 {
+  font-size: 2.5rem;
+  color: #FF6B6B;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.morning-header p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.morning-card {
+  max-width: 700px;
+}
+
+.chaos-reveal {
+  margin-bottom: 2rem;
+}
+
+.chaos-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #2C2C2C;
+  margin-bottom: 1.5rem;
+}
+
+.chaos-message {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border: 4px solid #2C2C2C;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+}
+
+.chaos-message.protected {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border-color: #4CAF50;
+}
+
+.chaos-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.chaos-text {
+  font-size: 1.5rem;
+  color: #2C2C2C;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.framed-player {
+  background: #FFE5E5;
+  border: 3px solid #FF6B6B;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 300px;
+}
+
+.framed-avatar {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.framed-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #FF6B6B;
+}
+
+.chaos-subtext {
+  font-size: 1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.investigation-result {
+  background: linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%);
+  border: 4px solid #FFD700;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.investigation-result h3 {
+  font-size: 1.5rem;
+  color: #2C2C2C;
+  margin-bottom: 1.5rem;
+}
+
+.result-box {
+  background: white;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.result-box.naughty {
+  background: #FFE5E5;
+  border-color: #FF6B6B;
+}
+
+.result-box.good {
+  background: #E8F5E9;
+  border-color: #4CAF50;
+}
+
+.result-player {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2C2C2C;
+  margin-bottom: 0.5rem;
+}
+
+.result-verdict {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.verdict-icon {
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+
+.investigation-hint {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+.healer-result {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+  border: 4px solid #4CAF50;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.healer-result h3 {
+  font-size: 1.5rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+}
+
+.healer-success {
+  font-size: 1.2rem;
+  color: #2E7D32;
+  font-weight: 600;
+}
+
+.morning-actions {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.waiting-message {
+  padding: 1.5rem;
+  background: #B0E0E6;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+}
+
+.waiting-message p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2C2C2C;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .morning-header h1 {
+    font-size: 2rem;
+  }
+
+  .chaos-title {
+    font-size: 1.5rem;
+  }
+
+  .chaos-icon {
+    font-size: 3.5rem;
+  }
+
+  .chaos-text {
+    font-size: 1.2rem;
+  }
+
+  .framed-name {
+    font-size: 1.5rem;
+  }
+}
