@@ -17,9 +17,22 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 /**
+ * Generate a random room code
+ */
+function generateRoomCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+/**
  * Create a new game room
  */
-export async function createRoom(roomCode, hostPlayer) {
+export async function createRoom(hostPlayer) {
+  const roomCode = generateRoomCode();
   const roomRef = ref(database, `rooms/${roomCode}`);
   
   await set(roomRef, {
@@ -44,6 +57,8 @@ export async function createRoom(roomCode, hostPlayer) {
     createdAt: Date.now(),
     status: 'waiting'
   });
+  
+  return roomCode;
 }
 
 /**
