@@ -34,9 +34,28 @@ function Night({ player }) {
     return () => unsubscribe();
   }, [player, roomCode, navigate]);
 
-  // Timer countdown
+  // Timer countdown with auto-transition
   useEffect(() => {
-    if (timeLeft <= 0) return;
+    if (timeLeft <= 0) {
+      // When timer hits 0, force transition if host
+      if (roomData && roomData.hostId === player.id) {
+        const nightActions = roomData.gameState.nightActions || {};
+        const players = Object.keys(roomData.players);
+        const alivePlayers = players.filter(
+          id => !roomData.gameState.eliminated?.includes(id)
+        );
+        const actionCount = Object.keys(nightActions).length;
+
+        // If not everyone submitted, force transition anyway
+        if (actionCount < alivePlayers.length) {
+          console.log('Timer expired, forcing transition to morning');
+          updateGameState(roomCode, {
+            phase: PHASES.MORNING
+          });
+        }
+      }
+      return;
+    }
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -52,7 +71,7 @@ function Night({ player }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, actionSubmitted, roomData]);
+  }, [timeLeft, actionSubmitted, roomData, player, roomCode]);
 
   const handleAutoSubmit = async () => {
     if (!roomData) return;
@@ -73,7 +92,6 @@ function Night({ player }) {
     });
 
     setActionSubmitted(true);
-    checkIfAllActionsComplete();
   };
 
   const handleSubmitAction = async () => {
@@ -94,22 +112,16 @@ function Night({ player }) {
     });
 
     setActionSubmitted(true);
-    checkIfAllActionsComplete();
-  };
-
-  const checkIfAllActionsComplete = async () => {
-    if (!roomData) return;
-
+    
+    // Check if everyone is done
     const players = Object.keys(roomData.players);
     const alivePlayers = players.filter(
       id => !roomData.gameState.eliminated?.includes(id)
     );
+    const newActionCount = Object.keys(nightActions).length + 1;
 
-    const nightActions = roomData.gameState.nightActions || {};
-    const actionCount = Object.keys(nightActions).length;
-
-    // If all alive players submitted, move to morning
-    if (actionCount >= alivePlayers.length && roomData.hostId === player.id) {
+    // If all players submitted and we're the host, move to morning
+    if (newActionCount >= alivePlayers.length && roomData.hostId === player.id) {
       setTimeout(async () => {
         await updateGameState(roomCode, {
           phase: PHASES.MORNING
