@@ -34,65 +34,51 @@ function Night({ player }) {
     return () => unsubscribe();
   }, [player, roomCode, navigate]);
 
-  // Timer countdown with auto-transition
+  // Timer countdown
   useEffect(() => {
-    if (timeLeft <= 0) {
-      // When timer hits 0, force transition if host
-      if (roomData && roomData.hostId === player.id) {
-        const nightActions = roomData.gameState.nightActions || {};
-        const players = Object.keys(roomData.players);
-        const alivePlayers = players.filter(
-          id => !roomData.gameState.eliminated?.includes(id)
-        );
-        const actionCount = Object.keys(nightActions).length;
-
-        // If not everyone submitted, force transition anyway
-        if (actionCount < alivePlayers.length) {
-          console.log('Timer expired, forcing transition to morning');
-          updateGameState(roomCode, {
-            phase: PHASES.MORNING
-          });
-        }
-      }
-      return;
-    }
-
     const timer = setInterval(() => {
       setTimeLeft(prev => {
-        if (prev <= 1) {
-          // Auto-submit if time runs out
-          if (!actionSubmitted && roomData) {
-            handleAutoSubmit();
-          }
-          return 0;
+        const newTime = prev - 1;
+        
+        // When timer hits 0, auto-submit if not submitted
+        if (newTime <= 0 && !actionSubmitted && roomData) {
+          const myRole = roomData.gameState.roles[player.id];
+          const nightActions = roomData.gameState.nightActions || {};
+          
+          updateGameState(roomCode, {
+            nightActions: {
+              ...nightActions,
+              [player.id]: {
+                role: myRole,
+                target: selectedTarget || null,
+                timestamp: Date.now()
+              }
+            }
+          });
+          setActionSubmitted(true);
         }
-        return prev - 1;
+        
+        return newTime < 0 ? 0 : newTime;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, actionSubmitted, roomData, player, roomCode]);
+  }, [actionSubmitted, roomData, player, roomCode, selectedTarget]);
 
-  const handleAutoSubmit = async () => {
-    if (!roomData) return;
-    
-    const myRole = roomData.gameState.roles[player.id];
-    const nightActions = roomData.gameState.nightActions || {};
-
-    // Auto-submit with no action
-    await updateGameState(roomCode, {
-      nightActions: {
-        ...nightActions,
-        [player.id]: {
-          role: myRole,
-          target: null,
-          timestamp: Date.now()
-        }
-      }
-    });
-
-    setActionSubmitted(true);
-  };
+  // Force transition when timer expires (separate effect)
+  useEffect(() => {
+    if (timeLeft === 0 && roomData && roomData.hostId === player.id) {
+      console.log('⏰ Timer expired! Forcing transition to morning in 3 seconds...');
+      const transitionTimer = setTimeout(() => {
+        console.log('🌅 Moving to morning phase NOW!');
+        updateGameState(roomCode, {
+          phase: PHASES.MORNING
+        });
+      }, 3000);
+      
+      return () => clearTimeout(transitionTimer);
+    }
+  }, [timeLeft, roomData, player, roomCode]);
 
   const handleSubmitAction = async () => {
     if (actionSubmitted || !roomData) return;
