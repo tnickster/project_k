@@ -158,7 +158,7 @@ function Voting({ player }) {
             <div className="vote-status">
               <strong>{totalVotes}</strong> / {activePlayers.length} players voted
             </div>
-            <div className="waiting-spinner">⏳</div>
+            <div className="waiting-icon">🔒</div>
           </div>
         </div>
       </div>

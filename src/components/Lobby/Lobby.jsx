@@ -1,85 +1,93 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { listenToRoom, leaveRoom, startGame } from '../../services/firebase';
-import { assignRoles } from '../../utils/roleAssignment';
-import { GAME_CONFIG } from '../../utils/constants';
+import { listenToRoom, updateGameState, leaveRoom } from '../../services/firebase';
+import { PHASES, assignRoles } from '../../utils/constants';
 import './Lobby.css';
 
-function Lobby({ player, roomCode }) {
-  const { roomCode: urlRoomCode } = useParams();
+function Lobby({ player, roomCode: propRoomCode }) {
+  const { roomCode: paramRoomCode } = useParams();
+  const roomCode = propRoomCode || paramRoomCode;
   const navigate = useNavigate();
-  const code = roomCode || urlRoomCode;
-  
   const [roomData, setRoomData] = useState(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!player || !code) {
+    if (!player || !roomCode) {
       navigate('/');
       return;
     }
 
-    // Listen to room updates
-    const unsubscribe = listenToRoom(code, (data) => {
+    const unsubscribe = listenToRoom(roomCode, (data) => {
       if (!data) {
-        setError('Room no longer exists');
-        setTimeout(() => navigate('/'), 2000);
+        navigate('/');
         return;
       }
       setRoomData(data);
-      
-      // If game started, navigate to role reveal
-    if (data.status === 'in_progress' && data.gameState.phase === 'role_reveal') {
-        navigate(`/role-reveal/${code}`);
+
+      if (data.gameState.phase === PHASES.ROLE_REVEAL) {
+        navigate(`/role-reveal/${roomCode}`);
       }
     });
 
     return () => unsubscribe();
-  }, [player, code, navigate]);
+  }, [player, roomCode, navigate]);
 
-  const handleLeaveRoom = async () => {
-    try {
-      await leaveRoom(code, player.id);
-      navigate('/');
-    } catch (err) {
-      console.error('Error leaving room:', err);
-      setError('Failed to leave room');
-    }
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(roomCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleToggleReady = async () => {
+    if (!roomData) return;
+
+    const currentPlayer = roomData.players[player.id];
+    const newReadyState = !currentPlayer.ready;
+
+    const { ref, update } = await import('firebase/database');
+    const { database } = await import('../../services/firebase');
+    
+    await update(ref(database, `rooms/${roomCode}/players/${player.id}`), {
+      ready: newReadyState
+    });
   };
 
   const handleStartGame = async () => {
-    const playerCount = Object.keys(roomData.players).length;
-    
-    if (playerCount < GAME_CONFIG.MIN_PLAYERS) {
-      setError(`Need at least ${GAME_CONFIG.MIN_PLAYERS} players to start!`);
-      return;
-    }
-    
-    if (playerCount > GAME_CONFIG.MAX_PLAYERS) {
-      setError(`Maximum ${GAME_CONFIG.MAX_PLAYERS} players allowed!`);
+    if (!roomData) return;
+
+    const playerIds = Object.keys(roomData.players);
+    const playerCount = playerIds.length;
+
+    if (playerCount < 4) {
+      alert('Need at least 4 players to start!');
       return;
     }
 
-    setLoading(true);
-    setError('');
-
-    try {
-      const playerIds = Object.keys(roomData.players);
-      const roleAssignments = assignRoles(playerIds);
-      await startGame(code, roleAssignments);
-    } catch (err) {
-      console.error('Error starting game:', err);
-      setError('Failed to start game. Please try again.');
-      setLoading(false);
+    const allReady = Object.values(roomData.players).every(p => p.ready);
+    if (!allReady) {
+      alert('All players must be ready!');
+      return;
     }
+
+    const roles = assignRoles(playerIds);
+
+    await updateGameState(roomCode, {
+      phase: PHASES.ROLE_REVEAL,
+      roles: roles,
+      round: 1
+    });
+  };
+
+  const handleLeaveLobby = async () => {
+    await leaveRoom(roomCode, player.id);
+    navigate('/');
   };
 
   if (!roomData) {
     return (
       <div className="page-container">
         <div className="card">
-          <h2 className="card-title">Loading...</h2>
+          <h2 className="card-title">Loading lobby...</h2>
         </div>
       </div>
     );
@@ -87,75 +95,97 @@ function Lobby({ player, roomCode }) {
 
   const players = Object.values(roomData.players || {});
   const isHost = roomData.hostId === player.id;
+  const allReady = players.length >= 4 && players.every(p => p.ready);
   const playerCount = players.length;
-  const canStart = playerCount >= GAME_CONFIG.MIN_PLAYERS && playerCount <= GAME_CONFIG.MAX_PLAYERS;
 
   return (
     <div className="page-container">
-      <div className="game-logo">
-        <h1>🐱 Naughty Kitty 🐱</h1>
-        <p>Waiting for players...</p>
-      </div>
+      <div className="lobby-container">
+        <h1 className="lobby-title">🐱 Game Lobby 🐱</h1>
 
-      <div className="card lobby-card">
-        <div className="room-code-display">
-          <div className="room-code-label">Room Code:</div>
-          <div className="room-code">{code}</div>
-          <div className="room-code-hint">Share this code with your friends!</div>
-        </div>
-
-        {error && <div className="error-message">{error}</div>}
-
-        <div className="player-count">
-          <strong>{playerCount}</strong> / {GAME_CONFIG.MAX_PLAYERS} Players
-          {playerCount < GAME_CONFIG.MIN_PLAYERS && (
-            <div className="player-count-warning">
-              Need {GAME_CONFIG.MIN_PLAYERS - playerCount} more player{GAME_CONFIG.MIN_PLAYERS - playerCount !== 1 ? 's' : ''} to start
+        <div className="card lobby-card">
+          <div className="room-code-section">
+            <h3>Room Code:</h3>
+            <div className="room-code-display">
+              <span className="room-code">{roomCode}</span>
+              <button 
+                className="btn btn-secondary copy-btn"
+                onClick={handleCopyCode}
+              >
+                {copied ? '✓ Copied!' : 'Copy'}
+              </button>
             </div>
-          )}
-        </div>
-
-        <div className="players-list">
-          <h3>Players:</h3>
-          <div className="players-grid">
-            {players.map((p) => (
-              <div key={p.id} className="player-item">
-                <div className="player-avatar">🐱</div>
-                <div className="player-info">
-                  <div className="player-name">
-                    {p.name}
-                    {p.isHost && <span className="host-badge">👑 Host</span>}
-                    {p.id === player.id && <span className="you-badge">(You)</span>}
-                  </div>
-                  <div className="player-cat">{p.avatar.replace('_', ' ')}</div>
-                </div>
-              </div>
-            ))}
+            <p className="room-hint">Share this code with your friends!</p>
           </div>
-        </div>
 
-        <div className="lobby-actions">
-          {isHost ? (
+          <div className="players-section">
+            <h3>Players ({playerCount}/10):</h3>
+            <div className="players-list">
+              {players.map((p) => (
+                <div key={p.id} className="player-item">
+                  <div className="player-avatar">🐱</div>
+                  <div className="player-info">
+                    <span className="player-name">
+                      {p.name}
+                      {p.isHost && <span className="host-badge">Host</span>}
+                      {p.id === player.id && <span className="you-badge">(You)</span>}
+                    </span>
+                  </div>
+                  <div className="player-status">
+                    {p.ready ? (
+                      <span className="ready-badge">✓ Ready</span>
+                    ) : (
+                      <span className="not-ready-badge">Not Ready</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="lobby-info">
+            <h4>Game Info:</h4>
+            <ul>
+              <li>4-10 players required</li>
+              <li>All players must be ready to start</li>
+              <li>Roles will be assigned randomly</li>
+              <li>Find the Naughty Kitty before it's too late!</li>
+            </ul>
+          </div>
+
+          <div className="lobby-actions">
             <button
-              className="btn btn-primary"
-              onClick={handleStartGame}
-              disabled={!canStart || loading}
+              className={`btn btn-large ${roomData.players[player.id]?.ready ? 'btn-secondary' : 'btn-primary'}`}
+              onClick={handleToggleReady}
             >
-              {loading ? 'Starting...' : 'Start Game'}
+              {roomData.players[player.id]?.ready ? 'Not Ready' : 'Ready Up!'}
             </button>
-          ) : (
-            <div className="waiting-message">
-              Waiting for host to start the game...
+
+            {isHost && (
+              <button
+                className="btn btn-primary btn-large mt-sm"
+                onClick={handleStartGame}
+                disabled={!allReady}
+              >
+                Start Game
+              </button>
+            )}
+
+            <button
+              className="btn btn-secondary mt-sm"
+              onClick={handleLeaveLobby}
+            >
+              Leave Lobby
+            </button>
+          </div>
+
+          {isHost && !allReady && (
+            <div className="start-hint">
+              {playerCount < 4 
+                ? `Need ${4 - playerCount} more player${4 - playerCount !== 1 ? 's' : ''} to start`
+                : 'All players must be ready to start'}
             </div>
           )}
-
-          <button
-            className="btn btn-secondary mt-sm"
-            onClick={handleLeaveRoom}
-            disabled={loading}
-          >
-            Leave Room
-          </button>
         </div>
       </div>
     </div>

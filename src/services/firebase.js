@@ -163,4 +163,8 @@ export async function startGame(roomCode, roleAssignments) {
   await update(ref(database), updates);
 }
 
-export { database };
+export { 
+  database,
+  ref,
+  update
+};

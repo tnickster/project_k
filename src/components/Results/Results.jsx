@@ -22,14 +22,48 @@ function Results({ player }) {
       }
       setRoomData(data);
 
-      // Navigate when phase changes to transition
+      // Navigate when phase changes
       if (data.gameState.phase === PHASES.TRANSITION) {
         navigate(`/transition/${roomCode}`);
+      }
+
+      // Return to lobby when game resets
+      if (data.gameState.phase === PHASES.LOBBY) {
+        navigate(`/lobby/${roomCode}`);
       }
     });
 
     return () => unsubscribe();
   }, [player, roomCode, navigate]);
+
+  const handleReturnToLobby = async () => {
+    if (!roomData || roomData.hostId !== player.id) return;
+
+    // Reset game state but keep players
+    await updateGameState(roomCode, {
+      phase: PHASES.LOBBY,
+      round: 0,
+      roles: {},
+      votes: {},
+      eliminated: [],
+      jailed: [],
+      nightActions: {},
+      discussionReady: {},
+      lastEliminated: null
+    });
+
+    // Reset all player ready states
+    const playerUpdates = {};
+    Object.keys(roomData.players).forEach(playerId => {
+      playerUpdates[`players/${playerId}/ready`] = false;
+    });
+
+    if (Object.keys(playerUpdates).length > 0) {
+      const { ref, update } = await import('firebase/database');
+      const { database } = await import('../../services/firebase');
+      await update(ref(database, `rooms/${roomCode}`), playerUpdates);
+    }
+  };
 
   if (!roomData) {
     return (
@@ -58,9 +92,7 @@ function Results({ player }) {
   const activeNaughty = activePlayers.filter(id => roles[id] === 'naughty');
   const activeGood = activePlayers.filter(id => roles[id] !== 'naughty');
 
-  // Win conditions:
-  // Naughty wins if: number of naughty >= number of good (among active players)
-  // Good wins if: all naughty are eliminated
+  // Win conditions
   const aliveNaughty = alivePlayers.filter(id => roles[id] === 'naughty');
   const naughtyWins = activeNaughty.length >= activeGood.length && activeNaughty.length > 0;
   const goodWins = aliveNaughty.length === 0;
@@ -132,12 +164,23 @@ function Results({ player }) {
               </div>
             </div>
 
-            <button
-              className="btn btn-primary btn-large mt-md"
-              onClick={() => navigate('/')}
-            >
-              Return to Home
-            </button>
+            <div className="game-over-actions">
+              {roomData.hostId === player.id ? (
+                <>
+                  <button
+                    className="btn btn-primary btn-large"
+                    onClick={handleReturnToLobby}
+                  >
+                    Return to Lobby
+                  </button>
+                  <p className="host-hint">Start a new game with the same players!</p>
+                </>
+              ) : (
+                <div className="waiting-message">
+                  <p>Waiting for host to return to lobby...</p>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="continue-card">
