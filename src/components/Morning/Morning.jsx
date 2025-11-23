@@ -42,8 +42,8 @@ function Morning({ player }) {
       }
 
       // Move to voting phase
-      if (data.gameState.phase === PHASES.VOTING) {
-        navigate(`/voting/${roomCode}`);
+      if (data.gameState.phase === PHASES.DISCUSSION) {
+        navigate(`/discussion/${roomCode}`);
       }
     });
 
@@ -56,7 +56,7 @@ function Morning({ player }) {
     // Host transitions to voting
     if (roomData.hostId === player.id) {
       await updateGameState(roomCode, {
-        phase: PHASES.VOTING
+        phase: PHASES.DISCUSSION
       });
     }
   };
@@ -171,7 +171,7 @@ function Morning({ player }) {
               className="btn btn-primary btn-large"
               onClick={handleContinue}
             >
-              Proceed to Voting
+              Proceed to Discussion
             </button>
           ) : (
             <div className="waiting-message">

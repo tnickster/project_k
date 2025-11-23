@@ -163,4 +163,16 @@
   .vote-name {
     font-size: 1.1rem;
   }
+
+  .skip-option {
+    background: #E0E0E0;
+      }
+
+  .skip-option:hover {
+    background: #BDBDBD;
+  }
+
+  .skip-option.selected {
+    background: #9E9E9E;
+  }
 }

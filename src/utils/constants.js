@@ -9,8 +9,10 @@ export const PHASES = {
   ROLE_REVEAL: 'role_reveal',
   NIGHT: 'night',
   MORNING: 'morning',
+  DISCUSSION: 'discussion',
   VOTING: 'voting',
-  RESULT: 'result'
+  RESULT: 'result',
+  TRANSITION: 'transition'
 };
 
 export const ROLE_INFO = {

@@ -1,0 +1,171 @@
+.discussion-container {
+  background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.discussion-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.discussion-header h1 {
+  font-size: 2.5rem;
+  color: #2C2C2C;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.discussion-timer {
+  font-size: 1.5rem;
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.discussion-timer strong {
+  font-size: 2rem;
+  color: #2E7D32;
+}
+
+.discussion-card {
+  max-width: 700px;
+}
+
+.discussion-prompt {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%);
+  border: 4px solid #2C2C2C;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+}
+
+.discussion-prompt h2 {
+  font-size: 2rem;
+  color: #2C2C2C;
+  margin-bottom: 0.5rem;
+}
+
+.discussion-prompt p {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 0;
+}
+
+.chaos-reminder {
+  margin-bottom: 2rem;
+}
+
+.chaos-reminder h3 {
+  font-size: 1.3rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+}
+
+.chaos-summary {
+  padding: 1.5rem;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.chaos-summary.protected {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.chaos-summary.framed {
+  background: #FFE5E5;
+  color: #D32F2F;
+}
+
+.chaos-summary.quiet {
+  background: #E3F2FD;
+  color: #1976D2;
+}
+
+.alive-players-section {
+  margin-bottom: 2rem;
+}
+
+.alive-players-section h3 {
+  font-size: 1.3rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+}
+
+.alive-players-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.alive-player-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+}
+
+.player-avatar {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.player-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2C2C2C;
+  flex: 1;
+}
+
+.you-badge {
+  color: #4CAF50;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.discussion-hints {
+  background: #FFF8DC;
+  border: 3px solid #2C2C2C;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.discussion-hints h3 {
+  font-size: 1.2rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+}
+
+.discussion-hints ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.discussion-hints li {
+  color: #2C2C2C;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .discussion-header h1 {
+    font-size: 2rem;
+  }
+
+  .discussion-prompt h2 {
+    font-size: 1.5rem;
+  }
+
+  .player-avatar {
+    font-size: 1.5rem;
+  }
+
+  .player-name {
+    font-size: 1rem;
+  }
+}

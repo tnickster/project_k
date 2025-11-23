@@ -54,10 +54,11 @@ function Results({ player }) {
   const gameOver = naughtyWins || goodWins;
 
   return (
-    <div className="page-container">
-      <div className="results-container">
-        <h1 className="results-title">📊 Voting Results 📊</h1>
+  <div className="page-container">
+    <div className="results-container">
+      <h1 className="results-title">📊 Voting Results 📊</h1>
 
+      {lastEliminated ? (
         <div className="elimination-card">
           <h2 className="elimination-header">Player Eliminated:</h2>
           
@@ -77,57 +78,76 @@ function Results({ player }) {
             <p className="role-description-small">{roleInfo?.description}</p>
           </div>
         </div>
+      ) : (
+        <div className="elimination-card">
+          <h2 className="elimination-header">No One Was Eliminated</h2>
+          <p className="no-elimination-text">
+            The votes were tied or everyone skipped!
+          </p>
+        </div>
+      )}
 
-        {gameOver ? (
-          <div className={`game-over-card ${naughtyWins ? 'naughty-win' : 'good-win'}`}>
-            <h2 className="game-over-title">
-              {naughtyWins ? '😼 Naughty Kitty Wins! 😼' : '😺 Good Cats Win! 😺'}
-            </h2>
-            <p className="game-over-text">
-              {naughtyWins 
-                ? 'The Naughty Kitties outnumber the good cats!'
-                : 'All Naughty Kitties have been caught!'}
-            </p>
-            
-            <div className="all-roles">
-              <h3>All Players & Roles:</h3>
-              <div className="roles-grid">
-                {Object.entries(roomData.players).map(([id, p]) => (
-                  <div key={id} className="role-item">
-                    <span className="role-player-name">{p.name}</span>
-                    <span 
-                      className="role-badge"
-                      style={{ backgroundColor: ROLE_INFO[roles[id]]?.color }}
-                    >
-                      {ROLE_INFO[roles[id]]?.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
+      {gameOver ? (
+        <div className={`game-over-card ${naughtyWins ? 'naughty-win' : 'good-win'}`}>
+          <h2 className="game-over-title">
+            {naughtyWins ? '😼 Naughty Kitty Wins! 😼' : '😺 Good Cats Win! 😺'}
+          </h2>
+          <p className="game-over-text">
+            {naughtyWins 
+              ? 'The Naughty Kitties outnumber the good cats!'
+              : 'All Naughty Kitties have been caught!'}
+          </p>
+          
+          <div className="all-roles">
+            <h3>All Players & Roles:</h3>
+            <div className="roles-grid">
+              {Object.entries(roomData.players).map(([id, p]) => (
+                <div key={id} className="role-item">
+                  <span className="role-player-name">{p.name}</span>
+                  <span 
+                    className="role-badge"
+                    style={{ backgroundColor: ROLE_INFO[roles[id]]?.color }}
+                  >
+                    {ROLE_INFO[roles[id]]?.name}
+                  </span>
+                </div>
+              ))}
             </div>
+          </div>
 
+          <button
+            className="btn btn-primary btn-large mt-md"
+            onClick={() => navigate('/')}
+          >
+            Return to Home
+          </button>
+        </div>
+      ) : (
+        <div className="continue-card">
+          <h3>The Game Continues!</h3>
+          <p>{aliveGood.length} good cats vs {aliveNaughty.length} naughty {aliveNaughty.length === 1 ? 'kitty' : 'kitties'}</p>
+          
+          {roomData.hostId === player.id ? (
             <button
               className="btn btn-primary btn-large mt-md"
-              onClick={() => navigate('/')}
+              onClick={async () => {
+                await updateGameState(roomCode, {
+                  phase: PHASES.TRANSITION
+                });
+                navigate(`/transition/${roomCode}`);
+              }}
             >
-              Return to Home
+              Continue to Next Round
             </button>
-          </div>
-        ) : (
-          <div className="continue-card">
-            <h3>Game Continues!</h3>
-            <p>{aliveGood.length} good cats vs {aliveNaughty.length} naughty {aliveNaughty.length === 1 ? 'kitty' : 'kitties'}</p>
-            <p className="continue-hint">Another round would start here...</p>
-            <button
-              className="btn btn-primary mt-md"
-              onClick={() => navigate('/')}
-            >
-              End Game (More rounds coming soon!)
-            </button>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="waiting-message">
+              <p>Waiting for host to continue...</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
+  </div>
   );
 }
 

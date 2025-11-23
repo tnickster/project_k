@@ -50,7 +50,9 @@ function Voting({ player }) {
     const voteCounts = {};
     
     Object.values(votes).forEach(votedPlayerId => {
-      voteCounts[votedPlayerId] = (voteCounts[votedPlayerId] || 0) + 1;
+      if (votedPlayerId !== 'SKIP'){
+        voteCounts[votedPlayerId] = (voteCounts[votedPlayerId] || 0) + 1;
+      }
     });
 
     let maxVotes = 0;
@@ -62,6 +64,15 @@ function Voting({ player }) {
         eliminatedPlayer = playerId;
       }
     });
+
+    if (!eliminatedPlayer || maxVotes === 0){
+      await updateGameState(roomCode, {
+        ohase: PHASES.RESULT,
+        lastEliminated: null,
+        votes:{}
+      });
+      return;
+    }
 
     const eliminated = [...(data.gameState.eliminated || []), eliminatedPlayer];
     
@@ -138,6 +149,17 @@ function Voting({ player }) {
                   </div>
                 </button>
               ))}
+              {/* Skip Vote Option */}
+              <button
+                className={`vote-option skip-option ${selectedPlayer === 'SKIP' ? 'selected' : ''}`}
+                onClick={() => handleVote('SKIP')}
+              >
+                <div className="vote-avatar">🤷</div>
+                <div className="vote-info">
+                  <div className="vote-name">Skip Vote</div>
+                  <div className="vote-cat">Not sure yet</div>
+                </div>
+              </button>
             </div>
           </>
         ) : (

@@ -4,10 +4,12 @@ import Home from './components/Home/Home';
 import Lobby from './components/Lobby/Lobby';
 import RoleReveal from './components/RoleReveal/RoleReveal';
 import Night from './components/Night/Night';
+import Morning from './components/Morning/Morning';
+import Discussion from './components/Discussion/Discussion';
 import Voting from './components/Voting/Voting';
 import Results from './components/Results/Results';
+import Transition from './components/Transition/Transition';
 import './App.css';
-import Morning from './components/Morning/Morning';
 
 function App() {
   const [player, setPlayer] = useState(null);
@@ -90,6 +92,18 @@ function App() {
             } 
           />
           <Route 
+            path="/discussion/:roomCode" 
+            element={
+              player ? (
+                <Discussion 
+                  player={player}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
             path="/voting/:roomCode" 
             element={
               player ? (
@@ -106,6 +120,18 @@ function App() {
             element={
               player ? (
                 <Results 
+                  player={player}
+                />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/transition/:roomCode" 
+            element={
+              player ? (
+                <Transition 
                   player={player}
                 />
               ) : (
