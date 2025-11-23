@@ -175,4 +175,71 @@
   .skip-option.selected {
     background: #9E9E9E;
   }
+
+  .jailed-message {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.jailed-icon {
+  font-size: 6rem;
+  margin-bottom: 1.5rem;
+}
+
+.jailed-message h2 {
+  font-size: 2rem;
+  color: #FF6B6B;
+  margin-bottom: 1rem;
+}
+
+.jailed-text {
+  font-size: 1.3rem;
+  color: #2C2C2C;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.jailed-subtext {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.vote-status {
+  font-size: 1.5rem;
+  color: #4CAF50;
+  margin: 2rem 0;
+  font-weight: 600;
+}
+
+.vote-status strong {
+  color: #2E7D32;
+  font-size: 2rem;
+}
+
+.waiting-spinner {
+  font-size: 3rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.skip-option {
+  background: #E0E0E0;
+}
+
+.skip-option:hover {
+  background: #BDBDBD;
+}
+
+.skip-option.selected {
+  background: #9E9E9E;
+}
 }

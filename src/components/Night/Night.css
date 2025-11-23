@@ -234,4 +234,35 @@
   .target-name {
     font-size: 1.1rem;
   }
+
+  .jail-notice {
+  color: #FF6B6B;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.jailed-tag {
+  font-size: 0.85rem;
+  color: #FF6B6B;
+}
+
+.jailed-section {
+  text-align: center;
+  padding: 2rem;
+  background: #FFE5E5;
+  border: 4px solid #FF6B6B;
+  border-radius: 16px;
+}
+
+.jailed-section h2 {
+  color: #D32F2F;
+  margin-bottom: 1rem;
+}
+
+.jailed-section .night-instruction {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
 }

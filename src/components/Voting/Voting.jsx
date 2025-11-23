@@ -26,11 +26,15 @@ function Voting({ player }) {
 
       const votes = data.gameState.votes || {};
       const players = Object.keys(data.players || {});
-      const alivePlayers = players.filter(
-        id => !data.gameState.eliminated?.includes(id)
+      const jailed = data.gameState.jailed || [];
+      const eliminated = data.gameState.eliminated || [];
+      
+      // Only active players can vote
+      const activePlayers = players.filter(
+        id => !eliminated.includes(id) && !jailed.includes(id)
       );
 
-      if (Object.keys(votes).length === alivePlayers.length && 
+      if (Object.keys(votes).length === activePlayers.length && 
           Object.keys(votes).length > 0) {
         if (data.hostId === player.id && data.gameState.phase === PHASES.VOTING) {
           calculateVoteResults(data);
@@ -47,14 +51,17 @@ function Voting({ player }) {
 
   const calculateVoteResults = async (data) => {
     const votes = data.gameState.votes || {};
-    const voteCounts = {};
+    const jailed = data.gameState.jailed || [];
     
+    // Count votes (ignore SKIP votes and votes for jailed players)
+    const voteCounts = {};
     Object.values(votes).forEach(votedPlayerId => {
-      if (votedPlayerId !== 'SKIP'){
+      if (votedPlayerId !== 'SKIP' && !jailed.includes(votedPlayerId)) {
         voteCounts[votedPlayerId] = (voteCounts[votedPlayerId] || 0) + 1;
       }
     });
 
+    // Find player with most votes
     let maxVotes = 0;
     let eliminatedPlayer = null;
     
@@ -65,15 +72,17 @@ function Voting({ player }) {
       }
     });
 
-    if (!eliminatedPlayer || maxVotes === 0){
+    // If no one got voted (all skipped or tie at 0), no elimination
+    if (!eliminatedPlayer || maxVotes === 0) {
       await updateGameState(roomCode, {
-        ohase: PHASES.RESULT,
+        phase: PHASES.RESULT,
         lastEliminated: null,
-        votes:{}
+        votes: {}
       });
       return;
     }
 
+    // Update game state with elimination
     const eliminated = [...(data.gameState.eliminated || []), eliminatedPlayer];
     
     await updateGameState(roomCode, {
@@ -110,11 +119,51 @@ function Voting({ player }) {
   }
 
   const players = Object.values(roomData.players || {});
-  const alivePlayers = players.filter(
-    p => !roomData.gameState.eliminated?.includes(p.id)
+  const jailed = roomData.gameState.jailed || [];
+  const eliminated = roomData.gameState.eliminated || [];
+  
+  // Players who can be voted for (alive, not jailed)
+  const votablePlayers = players.filter(
+    p => !eliminated.includes(p.id) && !jailed.includes(p.id)
   );
+  
+  // Players who can vote (alive, not jailed)
+  const activePlayers = players.filter(
+    p => !eliminated.includes(p.id) && !jailed.includes(p.id)
+  );
+  
   const votes = roomData.gameState.votes || {};
   const totalVotes = Object.keys(votes).length;
+  const isPlayerJailed = jailed.includes(player.id);
+
+  // If player is jailed, show spectator screen
+  if (isPlayerJailed) {
+    return (
+      <div className="page-container">
+        <div className="game-logo">
+          <h1>🔒 You're in Jail! 🔒</h1>
+          <p>Evidence points to you...</p>
+        </div>
+
+        <div className="card voting-card">
+          <div className="jailed-message">
+            <div className="jailed-icon">🔒</div>
+            <h2>You're Locked Up!</h2>
+            <p className="jailed-text">
+              You've been framed with evidence! You can't participate in voting.
+            </p>
+            <p className="jailed-subtext">
+              You'll stay in jail for the rest of the game, but you can still watch!
+            </p>
+            <div className="vote-status">
+              <strong>{totalVotes}</strong> / {activePlayers.length} players voted
+            </div>
+            <div className="waiting-spinner">⏳</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -125,14 +174,14 @@ function Voting({ player }) {
 
       <div className="card voting-card">
         <div className="vote-counter">
-          <strong>{totalVotes}</strong> / {alivePlayers.length} players voted
+          <strong>{totalVotes}</strong> / {activePlayers.length} players voted
         </div>
 
         {!hasVoted ? (
           <>
             <h3 className="voting-instruction">Select a player to vote:</h3>
             <div className="voting-grid">
-              {alivePlayers.map((p) => (
+              {votablePlayers.map((p) => (
                 <button
                   key={p.id}
                   className={`vote-option ${selectedPlayer === p.id ? 'selected' : ''} ${p.id === player.id ? 'is-you' : ''}`}
@@ -149,6 +198,7 @@ function Voting({ player }) {
                   </div>
                 </button>
               ))}
+              
               {/* Skip Vote Option */}
               <button
                 className={`vote-option skip-option ${selectedPlayer === 'SKIP' ? 'selected' : ''}`}
@@ -166,7 +216,7 @@ function Voting({ player }) {
           <div className="voted-message">
             <div className="voted-icon">✅</div>
             <h3>Vote Submitted!</h3>
-            <p>You voted for: <strong>{players.find(p => p.id === selectedPlayer)?.name}</strong></p>
+            <p>You voted for: <strong>{selectedPlayer === 'SKIP' ? 'Skip' : players.find(p => p.id === selectedPlayer)?.name}</strong></p>
             <div className="waiting-text">
               Waiting for other players to vote...
             </div>

@@ -41,7 +41,7 @@ function Morning({ player }) {
         }
       }
 
-      // Move to voting phase
+      // Move to discussion phase
       if (data.gameState.phase === PHASES.DISCUSSION) {
         navigate(`/discussion/${roomCode}`);
       }
@@ -53,10 +53,30 @@ function Morning({ player }) {
   const handleContinue = async () => {
     if (!roomData) return;
 
-    // Host transitions to voting
+    // Host transitions to discussion and processes night actions
     if (roomData.hostId === player.id) {
+      const nightActions = roomData.gameState.nightActions || {};
+      const naughtyAction = Object.values(nightActions).find(action => action.role === 'naughty');
+      const healerAction = Object.values(nightActions).find(action => action.role === 'healer');
+      
+      // Check if healer protected the framed player
+      const wasProtected = healerAction?.target === naughtyAction?.target;
+      
+      // Get current jailed players
+      const currentJailed = roomData.gameState.jailed || [];
+      
+      let newJailed = [...currentJailed];
+      
+      // If someone was framed and NOT protected, add them to jail
+      if (naughtyAction?.target && !wasProtected) {
+        if (!currentJailed.includes(naughtyAction.target)) {
+          newJailed.push(naughtyAction.target);
+        }
+      }
+
       await updateGameState(roomCode, {
-        phase: PHASES.DISCUSSION
+        phase: PHASES.DISCUSSION,
+        jailed: newJailed
       });
     }
   };
@@ -117,6 +137,9 @@ function Morning({ player }) {
               <p className="chaos-subtext">
                 A knocked over vase was found near their bed!
               </p>
+              <div className="jail-notice">
+                <strong>{framedPlayer.name}</strong> has been sent to jail! 🔒
+              </div>
             </div>
           ) : (
             <div className="chaos-message">
@@ -153,12 +176,12 @@ function Morning({ player }) {
         )}
 
         {/* Show healer confirmation (private) */}
-        {myRole === 'healer' && healerAction?.target === player.id && (
+        {myRole === 'healer' && healerAction?.target && (
           <div className="healer-result">
             <h3>😇 You protected someone last night!</h3>
-            {wasProtected && (
+            {wasProtected && framedPlayer && (
               <p className="healer-success">
-                ✅ Your protection was successful! You saved {framedPlayer?.name} from being framed!
+                ✅ Your protection was successful! You saved {framedPlayer.name} from jail!
               </p>
             )}
           </div>

@@ -210,4 +210,15 @@
   .framed-name {
     font-size: 1.5rem;
   }
+
+  .jail-notice {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #FFE5E5;
+    border: 3px solid #FF6B6B;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    color: #D32F2F;
+    font-weight: 600;
+  }
 }
